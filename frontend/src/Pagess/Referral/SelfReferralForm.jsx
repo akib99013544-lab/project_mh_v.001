@@ -41,49 +41,55 @@ const SelfReferralForm = () => {
     e.preventDefault();
     setSubmitStatus(null);
     setErrorMessage("");
+    const form = new FormData(e.currentTarget);
+    const field = (name) => (form.get(name) || "").toString();
+    const checkedList = (name) => form.getAll(name).map(String).join(", ");
 
     const payload = {
       // Personal
-      title:        formData.title        || "",
-      givenNames:   formData.givenNames   || "",
-      surname:      formData.surname      || "",
-      gender:       formData.gender       || "",
-      dateOfBirth:  formData.dateOfBirth  || "",
-      homePhone:    formData.homePhone    || "",
-      mobilePhone:  formData.mobilePhone  || "",
-      email:        userEmail || formData.email || "",
-      address:      formData.address      || "",
+      title:        field("title"),
+      givenNames:   field("givenNames"),
+      surname:      field("surname"),
+      gender:       field("gender"),
+      dateOfBirth:  field("dateOfBirth"),
+      homePhone:    field("homePhone"),
+      mobilePhone:  field("mobilePhone"),
+      email:        userEmail || field("email"),
+      address:      field("address"),
       // GP
-      gpName:       formData.gpName       || "",
-      gpClinic:     formData.gpClinic     || "",
-      gpPhone:      formData.gpPhone      || "",
-      gpFax:        formData.gpFax        || "",
-      gpAddress:    formData.gpAddress    || "",
+      gpName:       field("gpName"),
+      gpClinic:     field("gpClinic"),
+      gpPhone:      field("gpPhone"),
+      gpFax:        field("gpFax"),
+      gpAddress:    field("gpAddress"),
       // Consumer
-      countryOfBirth:  formData.countryOfBirth  || "",
-      languages:       formData.languages       || "",
-      maritalStatus:   formData.maritalStatus   || "",
-      isRefugee:       formData.isRefugee       || "",
-      atsi:            formData.atsi            || "",
-      medicareNumber:  formData.medicareNumber  || "",
-      livingSituation: Array.isArray(formData.livingSituation)
-        ? formData.livingSituation.join(", ")
-        : formData.livingSituation || "",
-      accommodationType: Array.isArray(formData.accommodationType)
-        ? formData.accommodationType.join(", ")
-        : formData.accommodationType || "",
+      countryOfBirth:  field("countryOfBirth"),
+      languages:       field("languages"),
+      maritalStatus:   field("maritalStatus"),
+      isRefugee:       field("isRefugee"),
+      atsi:            field("atsi"),
+      medicareNumber:  field("medicareNumber"),
+      irn:             field("irn"),
+      medicareExpiry:  field("medicareExpiry"),
+      healthCareCard:  field("healthCareCard"),
+      healthCareExpiry: field("healthCareExpiry"),
+      livingSituation: checkedList("livingSituation"),
+      accommodationType: checkedList("accommodationType"),
       // Emergency
-      emergencyName:         formData.emergencyName         || "",
-      emergencyRelationship: formData.emergencyRelationship || "",
-      emergencyPhone:        formData.emergencyPhone        || "",
+      emergencyName:         field("emergencyName"),
+      emergencyRelationship: field("emergencyRelationship"),
+      emergencyPhone:        field("emergencyPhone"),
       // Referral
       referralSource:  "SelfReferral",
-      requestedServices: Array.isArray(formData.requestedServices)
-        ? formData.requestedServices.join(", ")
-        : formData.requestedServices || "",
-      referralReason:  formData.referralReason  || "",
-      referralNotes:   formData.referralNotes   || "",
-      submittedByEmail: userEmail || formData.email || "anonymous",
+      requestedServices: checkedList("requestedServices"),
+      referralReason:  field("referralReason"),
+      referralNotes:   field("referralNotes"),
+      consent1: field("consent1"),
+      consent2: field("consent2"),
+      consent3: field("consent3"),
+      consent4: field("consent4"),
+      signature: field("signature"),
+      submittedByEmail: userEmail || field("email") || "anonymous",
     };
 
     try {

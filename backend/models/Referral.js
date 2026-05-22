@@ -45,6 +45,13 @@ const ReferralSchema = new mongoose.Schema({
   referralReason:  { type: String, trim: true, default: '' },
   referralNotes:   { type: String, trim: true, default: '' },
 
+  // Consent
+  consent1:  { type: String, trim: true, default: '' },
+  consent2:  { type: String, trim: true, default: '' },
+  consent3:  { type: String, trim: true, default: '' },
+  consent4:  { type: String, trim: true, default: '' },
+  signature: { type: String, trim: true, default: '' },
+
   // Meta
   submittedByEmail: { type: String, trim: true, lowercase: true, default: 'anonymous' },
 }, {
