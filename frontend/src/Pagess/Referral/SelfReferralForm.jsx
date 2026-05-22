@@ -11,9 +11,18 @@ const selectCls = inputCls;
 
 const SelfReferralForm = () => {
   const [formData, setFormData] = useState({});
+  const [userEmail, setUserEmail] = useState("");
   const [submitStatus, setSubmitStatus] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "null");
+    if (storedUser?.email) {
+      setUserEmail(storedUser.email);
+      setFormData((prev) => ({ ...prev, email: storedUser.email }));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -42,7 +51,7 @@ const SelfReferralForm = () => {
       dateOfBirth:  formData.dateOfBirth  || "",
       homePhone:    formData.homePhone    || "",
       mobilePhone:  formData.mobilePhone  || "",
-      email:        formData.email        || "",
+      email:        userEmail || formData.email || "",
       address:      formData.address      || "",
       // GP
       gpName:       formData.gpName       || "",
@@ -74,7 +83,7 @@ const SelfReferralForm = () => {
         : formData.requestedServices || "",
       referralReason:  formData.referralReason  || "",
       referralNotes:   formData.referralNotes   || "",
-      submittedByEmail: formData.email || "anonymous",
+      submittedByEmail: userEmail || formData.email || "anonymous",
     };
 
     try {
@@ -200,7 +209,18 @@ const SelfReferralForm = () => {
                 <input name="mobilePhone" type="tel" placeholder="0000 000 000" className={inputCls} />
               </Field>
               <Field label="Email Address" span={3}>
-                <input name="email" type="email" placeholder="you@example.com" className={inputCls} />
+                <input
+                  name="email"
+                  type="email"
+                  value={userEmail || formData.email || ""}
+                  onChange={(e) => {
+                    handleChange(e);
+                    e.stopPropagation();
+                  }}
+                  readOnly={Boolean(userEmail)}
+                  placeholder="you@example.com"
+                  className={`${inputCls} ${userEmail ? "cursor-not-allowed text-slate-500" : ""}`}
+                />
               </Field>
               <Field label="Residential Address" span={3}>
                 <input name="address" type="text" placeholder="Street, suburb, state, postcode" className={inputCls} />

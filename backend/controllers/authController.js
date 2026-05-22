@@ -105,10 +105,16 @@ const getUserProfile = async (req, res) => {
   try {
     const Assessment = require('../models/Assessment');
     const Referral   = require('../models/Referral');
+    const userEmail = req.user.email.toLowerCase().trim();
 
     const [assessments, referrals] = await Promise.all([
       Assessment.find({ userId: req.user._id }).sort({ createdAt: -1 }),
-      Referral.find({ submittedByEmail: req.user.email }).sort({ createdAt: -1 }),
+      Referral.find({
+        $or: [
+          { submittedByEmail: userEmail },
+          { email: userEmail },
+        ],
+      }).sort({ createdAt: -1 }),
     ]);
 
     res.json({

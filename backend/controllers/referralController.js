@@ -13,6 +13,9 @@ const createReferral = async (req, res) => {
       emergencyName, emergencyRelationship, emergencyPhone,
       referralSource, referralReason, referralNotes,
     } = req.body;
+    const submittedEmail = (req.user?.email || req.body.submittedByEmail || email || 'anonymous')
+      .toLowerCase()
+      .trim();
 
     const referral = await Referral.create({
       title:        title        || '',
@@ -22,7 +25,7 @@ const createReferral = async (req, res) => {
       dateOfBirth:  dateOfBirth  || '',
       homePhone:    homePhone    || '',
       mobilePhone:  mobilePhone  || '',
-      email:        email        || '',
+      email:        submittedEmail === 'anonymous' ? (email || '') : submittedEmail,
       address:      address      || '',
       gpName:       gpName       || '',
       gpClinic:     gpClinic     || '',
@@ -48,7 +51,7 @@ const createReferral = async (req, res) => {
       referralSource:  referralSource  || 'SelfReferral',
       referralReason:  referralReason  || '',
       referralNotes:   referralNotes   || '',
-      submittedByEmail: email || 'anonymous',
+      submittedByEmail: submittedEmail,
     });
 
     res.status(201).json({ success: true, referral });
@@ -63,7 +66,13 @@ const createReferral = async (req, res) => {
 // @access  Private
 const getUserReferrals = async (req, res) => {
   try {
-    const referrals = await Referral.find().sort({ createdAt: -1 });
+    const userEmail = req.user.email.toLowerCase().trim();
+    const referrals = await Referral.find({
+      $or: [
+        { submittedByEmail: userEmail },
+        { email: userEmail },
+      ],
+    }).sort({ createdAt: -1 });
     res.json(referrals);
   } catch (error) {
     console.error('Get Referrals Error:', error);
